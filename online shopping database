@@ -1,0 +1,79 @@
+-- create database onlineshop;
+use onlineshop;
+create table customer
+( cus_id integer primary key,
+  cus_name text,
+  cus_phoneno varchar(10),
+  cus_address varchar(20)
+  );
+  
+  create table item(
+  item_id integer primary key,
+  item_name text,
+  item_price integer 
+  );
+  
+  create table orders (
+
+  order_id integer primary key,
+  order_date date,
+  cus_id int,
+  item_id integer ,
+  order_status text,
+  CONSTRAINT FK_cus FOREIGN KEY (cus_id)
+    REFERENCES customer(cus_id),
+  CONSTRAINT FK_item FOREIGN KEY (item_id)
+    REFERENCES item(item_id)
+  );
+  
+  insert into customer values(1,'sheldon',76638828636,'silicon valley');
+  insert into customer values(2,'walter',8281272342,'washington');
+  insert into customer values(3,'Alex',7275464827,'seattle');
+  insert into customer values(4,'missy',2324526,'las vegas');
+  insert into customer values(5,'georgie',5623244461,'rome');
+  insert into customer values(6,'veronica',7252377347,'london');
+  
+  insert into item values (111,'Noodles',240);
+  insert into item values (222,'sugar',200);
+  insert into item values (333,'refrigerator',40000);
+  insert into item values (444,'AC',44000);
+  insert into item values (555,'Asus laptop',80000);
+  insert into item values (666,'oxymeter',10000);
+  insert into item values (777,'Watch',15000);
+  
+  insert into orders values(123,'2008-11-11',1,111,'delivered');
+  insert into orders values(234,'2008-11-12',1,333,'delivered');
+  insert into orders values(456,'2008-11-13',1,444,'delivered');
+  insert into orders values(5467,'2008-11-14',1,555,'delivered');
+  insert into orders values(2435,'2008-11-15',1,666,'delivered');
+  insert into orders values(364633,'2008-11-16',1,777,'delivered');
+  insert into orders values(353336,'2008-11-17',2,333,'delivered');
+  insert into orders values(123323,'2008-11-11',3,555,'delivered');
+  insert into orders values(14623,'2008-11-11',4,666,'delivered');
+  insert into orders values(174723,'2008-11-11',5,777,'Notdelivered');
+  insert into orders values(174723355,'2017-04-22',5,777,'Notdelivered');
+  
+  
+  
+ --  QUERY 01  Retrieve the number of items purchased by particular customer on particular date
+ select count(*) from orders o,customer c
+ where o.cus_id=c.cus_id and cus_name='sheldon' and o.order_date='2008-11-11';
+ 
+ -- Query 02 Retrieve the details of items purchased on particular date  and not delivered
+  select i.item_name,i.item_price from item i,orders o
+  where i.item_id=o.item_id
+  and o.order_date='2017-04-22' and o.order_status='Notdelivered';
+  
+ --  Query 03 Update the address of particular customer
+Update customer
+SET cus_address ='Banglore' Where cus_name='missy';
+SELECT * FROM customer WHERE cus_name='missy';
+
+-- QUERY 04 Retrieve customer id and name for those customers for whose the total purchase amount is greater than 50000 in his/her shopping history
+
+SELECT C.cus_id, C.cus_name FROM 
+(orders O JOIN customer C
+ ON O.cus_id = C.cus_id) JOIN
+ item I ON O.item_id = I.item_id 
+ GROUP BY O.cus_id HAVING SUM(I.item_price) > 50000;
+  
